@@ -3,8 +3,10 @@ package com.revature;
 public class Demo {
 
 	public static void main(String[] args) {
-		LoginAccount session = new LoginAccount();
+		Session session = new Session();
 		session.startProgram();
+		
+		Database.readObject("accounts.txt");
 	}
 
 }
