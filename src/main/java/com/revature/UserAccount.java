@@ -11,14 +11,18 @@ public class UserAccount extends Account implements UserActions {
 		this.username = "";
 		this.password = "";
 		this.accountId = 0;
+		this.isAdmin = false;
+		this.isSuperAdmin = false;
 		this.balance = 0;
 	}
 
-	public UserAccount(String firstName, String lastName, String username, String password, boolean isAdmin, int accountId, long balance) {
+	public UserAccount(String firstName, String lastName, String username, String password, boolean isAdmin, boolean isSuperAdmin, int accountId, long balance) {
 		super();
 		this.username = username;
 		this.password = password;
 		this.accountId = accountId;
+		this.isAdmin = isAdmin;
+		this.isSuperAdmin = isSuperAdmin;
 		this.balance = balance;
 	}
 	

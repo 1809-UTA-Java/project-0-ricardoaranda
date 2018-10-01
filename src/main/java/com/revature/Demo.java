@@ -8,5 +8,4 @@ public class Demo {
 		
 		Database.readObject("accounts.txt");
 	}
-
 }

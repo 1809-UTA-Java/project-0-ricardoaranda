@@ -12,6 +12,7 @@ public abstract class Account implements Serializable {
 	protected String firstName;
 	protected String lastName;
 	protected boolean isAdmin;
+	protected boolean isSuperAdmin;
 	protected AccountType accountType;
 	protected int accountId;
 	private static final long serialVersionUID = 1;
@@ -54,6 +55,10 @@ public abstract class Account implements Serializable {
 
 	public void setAdmin(boolean isAdmin) {
 		this.isAdmin = isAdmin;
+	}
+	
+	public boolean isSuperAdmin() {
+		return isSuperAdmin;
 	}
 	
 	public AccountType getAccountType() {
