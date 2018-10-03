@@ -12,10 +12,35 @@ public abstract class Account implements Serializable {
 	protected String firstName;
 	protected String lastName;
 	protected boolean isAdmin;
+	protected long balance;
 	protected boolean isSuperAdmin;
 	protected AccountType accountType;
 	protected int accountId;
 	private static final long serialVersionUID = 1;
+	
+	public Account() {
+		this.username = "";
+		this.password = "";
+		this.firstName = "";
+		this.lastName = "";
+		this.accountId = 0;
+		this.accountType = AccountType.CHECKINGS;
+		this.isAdmin = false;
+		this.isSuperAdmin = false;
+		this.balance = 0;
+	}
+	
+	public Account(String firstName, String lastName, String username, String password, boolean isAdmin, boolean isSuperAdmin, int accountId, long balance) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.password = password;
+		this.accountId = accountId;
+		this.accountType = AccountType.CHECKINGS;
+		this.isAdmin = isAdmin;
+		this.isSuperAdmin = isSuperAdmin;
+		this.balance = balance;
+	}
 
 	public String getUsername() {
 		return username;

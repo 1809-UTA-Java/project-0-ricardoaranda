@@ -1,7 +1,6 @@
 package com.revature;
 
 public class UserAccount extends Account implements UserActions {
-	private long balance;
 	private Account linkedAccounts[];
 	
 	private static final long serialVersionUID = 1;
@@ -17,7 +16,7 @@ public class UserAccount extends Account implements UserActions {
 	}
 
 	public UserAccount(String firstName, String lastName, String username, String password, boolean isAdmin, boolean isSuperAdmin, int accountId, long balance) {
-		super();
+		super(firstName, lastName, username, password, isAdmin, isSuperAdmin, accountId, balance);
 		this.username = username;
 		this.password = password;
 		this.accountId = accountId;
