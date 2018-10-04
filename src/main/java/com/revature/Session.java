@@ -1,47 +1,74 @@
 package com.revature;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Session  {
+public class Session {
 	boolean isLoggedIn;
 	boolean isAdmin;
-	final String dataFileName = "accounts.txt";
+	final String fileName = "accounts";
+	
+	public Session(ArrayList<Account> objList) {
+		isLoggedIn = false;
+		isAdmin = false;
+	}
 	
 	void startProgram() {
         Scanner sc = new Scanner(System.in);
         
         System.out.println("Welcome!");
-        System.out.println("Enter 'L' to log in or 'C' to create an account: ");
-
-        while (!sc.hasNext("[LlCc]")) {
-            System.out.println("Invalid input.\n");
-            System.out.println("Please enter 'L' to log in or 'C' to create an account: ");
+        System.out.println("Choose one of the options from the menu: ");
+        System.out.println("1. Log in.");
+        System.out.println("2. Create a new account.");
+        System.out.println("3. Exit.");
+        
+        while (!sc.hasNext("[123]")) {
+            System.out.println("Invalid input try again.");
             sc.next();
         }
 
         String response = sc.next();
         switch(response) {
-        	case("l"):
+        	case("1"):
         		login();
         		break;
-        	case("L"):
-        		login();
-        		break;
-        	case ("c"):
-        		createAccount();
-        		break;
-        	case ("C"):
+        	case ("2"):
         		createAccount();
         		break;
         	default:
         		break;
         }
-
+        
+        System.out.println();
         sc.close();
     }
 	
 	private void login() {
-		System.out.println("logging in...");
+		Scanner sc = new Scanner(System.in);
+		boolean validInput = false;
+		
+		System.out.println("Log In: ");
+		System.out.println("Enter your username: ");
+		
+		String username = sc.next();
+		validInput = validateUsername(username);
+		while (!validInput) {
+			System.out.println("This username does not exist, try again: ");
+			username = sc.next();
+			validInput = validateUsername(username);
+		}
+		
+		System.out.println("Enter your password: ");
+		
+		String password = sc.next();
+		validInput = false;
+		validInput = validatePassword(username, password);
+		while (!validInput) {
+			System.out.println("Password does not match, try again: ");
+			password = sc.next();
+			validInput = validatePassword(username, password);
+		}
+		sc.close();
 	}
 	
 	private void createAccount() {
@@ -68,8 +95,32 @@ public class Session  {
 		
 		newAccount.setAdmin(false);
 		
-		Database.writeObject(dataFileName, newAccount);
+		Database.writeObject("pending-transactions", newAccount);
+		
+		System.out.println("Your request for a new account has been submitted.");
 		
 		sc.close();
+	}
+	
+	public boolean validateUsername(String input) {
+		ArrayList<Account> list = Database.readAllObjects(fileName);
+		boolean validUsername = false;
+		
+		for (Account a : list) {
+			if (a.getUsername() != null && a.getUsername().contains(input)) {
+				validUsername = true;
+			}
+		}
+		
+		return validUsername;
+	}
+	
+	public boolean validatePassword(String username, String password) {
+		ArrayList<Account> list = Database.readAllObjects(fileName);
+		int index = Database.getObjectIndex(fileName, username);
+		if (list.get(index).getPassword().equals(password))
+			return true;
+		
+		return false;
 	}
 }

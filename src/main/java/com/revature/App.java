@@ -12,11 +12,11 @@ public class App
     public static void main( String[] args )
     {
     	ArrayList<Account> accountsList = new ArrayList<>();
-//		Session session = new Session();
-//		session.startProgram();
-		
-//		Database.readObject("accounts.txt");
-		accountsList = Database.writeAllObjects("accounts.txt");
-		Database.readAllObjects("accounts.txt");
+    	
+//    	accountsList = Database.readAllObjects("accounts");
+//		Database.printAllObjects(accountsList);
+    	
+		Session session = new Session(accountsList);
+		session.startProgram();
     }
 }

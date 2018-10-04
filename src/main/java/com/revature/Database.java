@@ -1,6 +1,5 @@
 package com.revature;
 
-import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -8,36 +7,35 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class Database {
 	static void writeObject(String fileName, Object obj) {
-		try (ObjectOutputStream oos = new ObjectOutputStream (new FileOutputStream (fileName))) {
-            oos.writeObject(obj);
-            
-            oos.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+		ArrayList<Account> newList = readAllObjects(fileName);
+		
+		// TODO: inscanceOf(Transactions)
+		newList.add((Account) obj);
+		
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream (fileName))) {
+			oos.writeObject(newList);
+			
+			oos.close();
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 	
-	static void readObject(String fileName) {
+	static int getObjectIndex(String fileName, String username) {
+		int index = 0;
+		ArrayList<Account> accountsList = new ArrayList<>();
 		try (ObjectInputStream ois = new ObjectInputStream (new FileInputStream (fileName))) {		
-			Account userAccount = new UserAccount();
+			accountsList = (ArrayList<Account>) ois.readObject();
 			
-			userAccount = (UserAccount) ois.readObject();
-			
-            System.out.println("Username: " + userAccount.getUsername());
-            System.out.println("Password: " + userAccount.getPassword());
-            System.out.println("First name: " + userAccount.getFirstName());
-            System.out.println("Last name: " + userAccount.getLastName());
-            System.out.println("Account type: " + userAccount.getAccountType());
-            System.out.println("Privileges: " + userAccount.isAdmin());
-            
+			for (Account a : accountsList) {
+				if (a.getUsername() != null && a.getUsername().contains(username))
+						index = accountsList.indexOf(a);
+			}        
             ois.close();
 		}
 		catch (FileNotFoundException ex) {
@@ -49,6 +47,9 @@ public class Database {
         catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
+		
+		return index;
+		
 	}
 	
 	static public ArrayList<Account> writeAllObjects(String fileName) {
@@ -68,21 +69,10 @@ public class Database {
 			ex.printStackTrace();
 		}
 		
-		// ArrayList to array, to be able to access object fields
-//		Account array[] = new Account[accountsList.size()];
-//		accountsList.toArray(array);
-//		for (int i = 0; i < accountsList.size(); i++) {
-//			System.out.println("Username: " + array[i].getUsername());
-//			System.out.println("Password: " + array[i].getPassword());
-//			System.out.println("First name: " + array[i].getFirstName());
-//			System.out.println("Last name: " + array[i].getLastName());
-//			System.out.println("Account type: " + array[i].getAccountType() + "\n");
-//		}
-
 		return accountsList;
 	}
 	
-	static public void readAllObjects(String fileName) {
+	static public ArrayList<Account> readAllObjects(String fileName) {
 		ArrayList<Account> accountsList = new ArrayList<>();
 		try (ObjectInputStream ois= new ObjectInputStream(new FileInputStream(fileName))) {
 			accountsList = (ArrayList<Account>) ois.readObject();
@@ -91,23 +81,27 @@ public class Database {
 		}
 		catch (FileNotFoundException ex) {
             ex.printStackTrace();
-        } 
+        }
         catch (IOException ex) {
             ex.printStackTrace();
-        } 
+        }
         catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
 		
-		System.out.println("Outputing all objects in file..." + '\n');
-		Account array[] = new Account[accountsList.size()];
-		accountsList.toArray(array);
-		for (int i = 0; i < accountsList.size(); i++) {
-			System.out.println("Username: " + array[i].getUsername());
-			System.out.println("Password: " + array[i].getPassword());
-			System.out.println("First name: " + array[i].getFirstName());
-			System.out.println("Last name: " + array[i].getLastName());
-			System.out.println("Account type: " + array[i].getAccountType() + "\n");
+		return accountsList;
+	}
+	
+	static public void printAllObjects (ArrayList<Account> list) {
+		ArrayList<Account> newList= new ArrayList<>(list);
+		Iterator<Account> it = newList.iterator();
+		while (it.hasNext()) {
+			Account acc = (Account) it.next();
+			System.out.println("Username: " + acc.getUsername());
+			System.out.println("Password: " + acc.getPassword());
+			System.out.println("First name: " + acc.getFirstName());
+			System.out.println("Last name: " + acc.getLastName());
+			System.out.println("Account type: " + acc.getAccountType() + "\n");
 		}
 	}
 }
