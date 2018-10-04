@@ -6,16 +6,16 @@ import java.util.Scanner;
 public class Session {
 	boolean isLoggedIn;
 	boolean isAdmin;
+	Scanner sc;
 	final String fileName = "accounts";
 	
-	public Session(ArrayList<Account> objList) {
+	public Session(ArrayList<Account> objList, Scanner scanner) {
+		sc = scanner;
 		isLoggedIn = false;
 		isAdmin = false;
 	}
 	
 	void startProgram() {
-        Scanner sc = new Scanner(System.in);
-        
         System.out.println("Welcome!");
         System.out.println("Choose one of the options from the menu: ");
         System.out.println("1. Log in.");
@@ -23,9 +23,10 @@ public class Session {
         System.out.println("3. Exit.");
         
         while (!sc.hasNext("[123]")) {
-            System.out.println("Invalid input try again.");
+            System.out.println("Invalid input, try again.");
             sc.next();
         }
+        System.out.println();
 
         String response = sc.next();
         switch(response) {
@@ -38,13 +39,9 @@ public class Session {
         	default:
         		break;
         }
-        
-        System.out.println();
-        sc.close();
     }
 	
 	private void login() {
-		Scanner sc = new Scanner(System.in);
 		boolean validInput = false;
 		
 		System.out.println("Log In: ");
@@ -68,12 +65,13 @@ public class Session {
 			password = sc.next();
 			validInput = validatePassword(username, password);
 		}
-		sc.close();
+		System.out.println();
+		
+		UserSession userSession = new UserSession(sc, username);
+		userSession.startUserSession();
 	}
 	
 	private void createAccount() {
-		Scanner sc = new Scanner(System.in);
-		
 		Account newAccount = new UserAccount();
 		
 		System.out.println("Enter a username: ");
@@ -98,8 +96,6 @@ public class Session {
 		Database.writeObject("pending-transactions", newAccount);
 		
 		System.out.println("Your request for a new account has been submitted.");
-		
-		sc.close();
 	}
 	
 	public boolean validateUsername(String input) {

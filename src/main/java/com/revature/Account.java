@@ -18,6 +18,12 @@ public abstract class Account implements Serializable {
 	protected int accountId;
 	private static final long serialVersionUID = 1;
 	
+	@Override
+	public String toString() {
+		return "Account [username = " + username + ", password = " + password + ", firstName = " + firstName + ", lastName = "
+				+ lastName + ", balance = $" + balance + ", accountType = " + accountType + ", accountId = " + accountId + "]\n";
+	}
+
 	public Account() {
 		this.username = "";
 		this.password = "";
@@ -112,4 +118,11 @@ public abstract class Account implements Serializable {
 		this.accountId = accountId;
 	}
 
+	public long getBalance() {
+		return balance;
+	}
+
+	public void setBalance(long balance) {
+		this.balance = balance;
+	}
 }

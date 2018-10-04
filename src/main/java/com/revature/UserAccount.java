@@ -62,10 +62,6 @@ public class UserAccount extends Account implements UserActions {
 		return false;
 	}
 	
-	/**
-	 * Getters and Setters
-	 * @return
-	 */
 	public long getBalance() {
 		return balance;
 	}
