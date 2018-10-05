@@ -2,6 +2,7 @@ package com.revature;
 
 import java.io.Serializable;
 import java.util.UUID;
+import java.util.ArrayList;
 
 public abstract class Account implements Serializable {
 	enum AccountType {
@@ -17,6 +18,7 @@ public abstract class Account implements Serializable {
 	protected long balance;
 	protected UUID accountId;
 	protected AccountType accountType;
+	protected ArrayList<String> linkedAccounts;
 	private static final long serialVersionUID = 1;
 
 	public Account() {
@@ -110,10 +112,6 @@ public abstract class Account implements Serializable {
 		return accountId;
 	}
 
-//	public void setAccountId(int accountId) {
-//		this.accountId = accountId;
-//	}
-
 	public long getBalance() {
 		return balance;
 	}
@@ -122,6 +120,14 @@ public abstract class Account implements Serializable {
 		this.balance = balance;
 	}
 	
+	public ArrayList<String> getLinkedAccounts() {
+		return linkedAccounts;
+	}
+	// might need to change this
+	public void setLinkedAccounts(ArrayList<String> linkedAccounts) {
+		this.linkedAccounts = linkedAccounts;
+	}
+
 	@Override
 	public String toString() {
 		return "Account [username = " + username + ", password = " + password + ", firstName = " + firstName + ", lastName = "

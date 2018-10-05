@@ -27,7 +27,7 @@ public class UserSession {
 		System.out.println("2. Withdraw");
 		System.out.println("3. Transfer");
 		System.out.println("4. Link accounts");
-		System.out.println("5. View account information");
+		System.out.println("5. View account information");	// view linked accounts' info
 		System.out.println("6. Log out");
 		
 		String response = "";

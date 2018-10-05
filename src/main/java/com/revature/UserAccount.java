@@ -3,8 +3,6 @@ package com.revature;
 import java.util.UUID;
 
 public class UserAccount extends Account implements UserActions {
-	private Account linkedAccounts[];
-	
 	private static final long serialVersionUID = 1;
 
 	public UserAccount() {

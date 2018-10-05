@@ -210,6 +210,7 @@ public class AdminSession {
 			System.out.println("3. First name");
 			System.out.println("4. Last name");
 			System.out.println("5. Balance");
+			System.out.println("6. Permission");
 			
 			while(!sc.hasNext("[12345]")) {
 				System.out.println("Invalid input, try again");
@@ -243,6 +244,9 @@ public class AdminSession {
 				System.out.println("Enter new balance:");
 				long newBalance = sc.nextLong();
 				account.setBalance(newBalance); 
+				break;
+			case("6"):
+				account.setAdmin(!account.isAdmin());
 				break;
 			default:
 				break;

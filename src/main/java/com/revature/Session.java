@@ -108,9 +108,15 @@ public class Session {
 	
 	private void createAccount() {
 		Account newAccount = new UserAccount();
+		String input;
 		
 		System.out.println("Enter a username: ");
-		newAccount.setUsername(sc.next());
+		input = sc.next();
+		while (validateUsername(input, userFileName)) {
+			System.out.println("That username already exists. Try another:");
+			input = sc.next();
+		}
+		newAccount.setUsername(input);
 		
 		System.out.println("Enter a password: ");
 		newAccount.setPassword(sc.next());
