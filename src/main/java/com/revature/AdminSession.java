@@ -12,11 +12,11 @@ public class AdminSession {
 	Account account;
 	
 	public AdminSession(Scanner scanner, String usernameArg) {
-		fileName = "accounts";
+		fileName = "employees";
 		username = usernameArg;
-		accountsList = Database.readAllObjects(fileName);
+		accountsList = Database.readAllObjects("employees");
 		sc = scanner;
-		index = Database.getObjectIndex(fileName, username);
+		index = Database.getObjectIndex("employees", username);
 		account = accountsList.get(index);
 	}
 	
