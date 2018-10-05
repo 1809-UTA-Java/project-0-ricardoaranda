@@ -1,5 +1,7 @@
 package com.revature;
 
+import java.util.UUID;
+
 public class UserAccount extends Account implements UserActions {
 	private Account linkedAccounts[];
 	
@@ -9,17 +11,16 @@ public class UserAccount extends Account implements UserActions {
 		super();
 		this.username = "";
 		this.password = "";
-		this.accountId = 0;
 		this.isAdmin = false;
 		this.isSuperAdmin = false;
 		this.balance = 0;
 	}
 
-	public UserAccount(String firstName, String lastName, String username, String password, boolean isAdmin, boolean isSuperAdmin, int accountId, long balance) {
-		super(firstName, lastName, username, password, isAdmin, isSuperAdmin, accountId, balance);
+	public UserAccount(String firstName, String lastName, String username, String password, boolean isAdmin, boolean isSuperAdmin, long balance) {
+		super(firstName, lastName, username, password, isAdmin, isSuperAdmin, balance);
 		this.username = username;
 		this.password = password;
-		this.accountId = accountId;
+		this.accountId = UUID.randomUUID();
 		this.isAdmin = isAdmin;
 		this.isSuperAdmin = isSuperAdmin;
 		this.balance = balance;

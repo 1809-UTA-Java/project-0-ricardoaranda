@@ -51,8 +51,9 @@ public class UserSession {
 			printAccountInformation();
 			break;
 		case("5"):
-			Session session = new Session(accountsList, sc);
+			Session session = new Session(sc);
 			session.startProgram();
+			break;
 		default:
 			break;
 		}

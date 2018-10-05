@@ -1,6 +1,7 @@
 package com.revature;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public abstract class Account implements Serializable {
 	enum AccountType {
@@ -12,36 +13,31 @@ public abstract class Account implements Serializable {
 	protected String firstName;
 	protected String lastName;
 	protected boolean isAdmin;
-	protected long balance;
 	protected boolean isSuperAdmin;
+	protected long balance;
+	protected UUID accountId;
 	protected AccountType accountType;
-	protected int accountId;
 	private static final long serialVersionUID = 1;
-	
-	@Override
-	public String toString() {
-		return "Account [username = " + username + ", password = " + password + ", firstName = " + firstName + ", lastName = "
-				+ lastName + ", balance = $" + balance + ", accountType = " + accountType + ", accountId = " + accountId + "]\n";
-	}
 
 	public Account() {
 		this.username = "";
 		this.password = "";
 		this.firstName = "";
 		this.lastName = "";
-		this.accountId = 0;
-		this.accountType = AccountType.CHECKINGS;
 		this.isAdmin = false;
 		this.isSuperAdmin = false;
 		this.balance = 0;
+		this.accountId = UUID.randomUUID();
+		this.accountType = AccountType.CHECKINGS;
+		
 	}
 	
-	public Account(String firstName, String lastName, String username, String password, boolean isAdmin, boolean isSuperAdmin, int accountId, long balance) {
+	public Account(String firstName, String lastName, String username, String password, boolean isAdmin, boolean isSuperAdmin, long balance) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
 		this.password = password;
-		this.accountId = accountId;
+		this.accountId = UUID.randomUUID();
 		this.accountType = AccountType.CHECKINGS;
 		this.isAdmin = isAdmin;
 		this.isSuperAdmin = isSuperAdmin;
@@ -110,13 +106,13 @@ public abstract class Account implements Serializable {
 			return false;
 	}
 
-	public int getAccountId() {
+	public UUID getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
-	}
+//	public void setAccountId(int accountId) {
+//		this.accountId = accountId;
+//	}
 
 	public long getBalance() {
 		return balance;
@@ -124,5 +120,11 @@ public abstract class Account implements Serializable {
 
 	public void setBalance(long balance) {
 		this.balance = balance;
+	}
+	
+	@Override
+	public String toString() {
+		return "Account [username = " + username + ", password = " + password + ", firstName = " + firstName + ", lastName = "
+				+ lastName + ", balance = $" + balance + ", accountType = " + accountType + ", accountId = " + accountId + "]\n";
 	}
 }

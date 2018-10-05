@@ -7,9 +7,11 @@ public class Session {
 	boolean isLoggedIn;
 	boolean isAdmin;
 	Scanner sc;
-	final String fileName = "accounts";
+	final String userFileName = "accounts";
+	final String employeeFileName = "employees";
+	final String pendingTransactionsFileName = "pending-transactions";
 	
-	public Session(ArrayList<Account> objList, Scanner scanner) {
+	public Session(Scanner scanner) {
 		sc = scanner;
 		isLoggedIn = false;
 		isAdmin = false;
@@ -20,9 +22,10 @@ public class Session {
         System.out.println("Choose one of the options from the menu: ");
         System.out.println("1. Log in.");
         System.out.println("2. Create a new account.");
-        System.out.println("3. Exit.");
+        System.out.println("3. Log in as admin: ");
+        System.out.println("4. Exit.");
         
-        while (!sc.hasNext("[123]")) {
+        while (!sc.hasNext("[1234]")) {
             System.out.println("Invalid input, try again.");
             sc.next();
         }
@@ -36,6 +39,8 @@ public class Session {
         	case ("2"):
         		createAccount();
         		break;
+        	case ("3"):
+        		loginAsAdmin();
         	default:
         		break;
         }
@@ -48,27 +53,57 @@ public class Session {
 		System.out.println("Enter your username: ");
 		
 		String username = sc.next();
-		validInput = validateUsername(username);
+		validInput = validateUsername(username, userFileName);
 		while (!validInput) {
 			System.out.println("This username does not exist, try again: ");
 			username = sc.next();
-			validInput = validateUsername(username);
+			validInput = validateUsername(username, userFileName);
 		}
 		
 		System.out.println("Enter your password: ");
 		
 		String password = sc.next();
 		validInput = false;
-		validInput = validatePassword(username, password);
+		validInput = validatePassword(username, password, userFileName);
 		while (!validInput) {
 			System.out.println("Password does not match, try again: ");
 			password = sc.next();
-			validInput = validatePassword(username, password);
+			validInput = validatePassword(username, password, userFileName);
 		}
 		System.out.println();
 		
 		UserSession userSession = new UserSession(sc, username);
 		userSession.startUserSession();
+	}
+	
+	public void loginAsAdmin() {
+		boolean validInput = false;
+		
+		System.out.println("Log in as admin: ");
+		System.out.println("Enter username: ");
+		
+		String username = sc.next();
+		validInput = validateUsername(username, employeeFileName);
+		while (!validInput) {
+			System.out.println("This username does not exist, try again: ");
+			username = sc.next();
+			validInput = validateUsername(username, employeeFileName);
+		}
+		
+		System.out.println("Enter your password: ");
+		
+		String password = sc.next();
+		validInput = false;
+		validInput = validatePassword(username, password, employeeFileName);
+		while (!validInput) {
+			System.out.println("Password does not match, try again: ");
+			password = sc.next();
+			validInput = validatePassword(username, password, employeeFileName);
+		}
+		System.out.println();
+		
+		AdminSession adminSession = new AdminSession(sc, username);
+		adminSession.startAdminSession();
 	}
 	
 	private void createAccount() {
@@ -93,12 +128,14 @@ public class Session {
 		
 		newAccount.setAdmin(false);
 		
-		Database.writeObject("pending-transactions", newAccount);
+		Database.writeObject(pendingTransactionsFileName, newAccount);
 		
 		System.out.println("Your request for a new account has been submitted.");
+		
+		startProgram();
 	}
 	
-	public boolean validateUsername(String input) {
+	public boolean validateUsername(String input, String fileName) {
 		ArrayList<Account> list = Database.readAllObjects(fileName);
 		boolean validUsername = false;
 		
@@ -111,7 +148,7 @@ public class Session {
 		return validUsername;
 	}
 	
-	public boolean validatePassword(String username, String password) {
+	public boolean validatePassword(String username, String password, String fileName) {
 		ArrayList<Account> list = Database.readAllObjects(fileName);
 		int index = Database.getObjectIndex(fileName, username);
 		if (list.get(index).getPassword().equals(password))
