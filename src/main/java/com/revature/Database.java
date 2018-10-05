@@ -11,6 +11,40 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Database {
+	public static void initialize() {
+    	File usersPath = new File("accounts");
+    	File employeesPath = new File("employees");
+    	File transactionsPath = new File ("pending-transactions");
+    	
+    	if (!usersPath.exists()) {
+    		try {
+				usersPath.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    	}
+    	if (!employeesPath.exists()) {
+    		try {
+    			employeesPath.createNewFile();
+    			
+    			/* create super admin */
+    	    	ArrayList<Account> accountsList = new ArrayList<>();
+    	    	AdminAccount superAdmin = new AdminAccount("superadmin", "asdf", true, true);
+    	    	accountsList.add(superAdmin);
+    	    	Database.writeObject("employees", superAdmin);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    	}
+    	if (!transactionsPath.exists()) {
+    		try {
+    			transactionsPath.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    	}
+    }
+	
 	static void writeObject(String fileName, Object obj) {
 		ArrayList<Account> newList = readAllObjects(fileName);
 		newList.add((Account) obj);
@@ -63,27 +97,6 @@ public class Database {
 		}
 	}
 	
-	/* UNUSED */
-//	static public ArrayList<Account> writeAllObjects(String fileName) {
-//		ArrayList<Account> accountsList = new ArrayList<>();
-//		Account account1 = new UserAccount("Rick", "Sanchez", "pickleRick", "p4ssw0rd", false, false, 0, 0);
-//		Account account2 = new UserAccount("Mary", "Ramos", "fridaMay", "asdf", false, false, 0, 0);
-//		
-//		accountsList.add(account1);
-//		accountsList.add(account2);
-//		
-//		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream (fileName))) {
-//			oos.writeObject(accountsList);
-//			
-//			oos.close();
-//		}
-//		catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
-//		
-//		return accountsList;
-//	}
-	
 	static public ArrayList<Account> readAllObjects(String fileName) {
 		ArrayList<Account> accountsList = new ArrayList<>();
 		File path = new File(fileName);
@@ -123,7 +136,8 @@ public class Database {
 			System.out.println("First name: " + acc.getFirstName());
 			System.out.println("Last name: " + acc.getLastName());
 			System.out.println("Account ID: + " + acc.getAccountId());
-			System.out.println("Account type: " + acc.getAccountType() + "\n");
+			System.out.println("Account type: " + acc.getAccountType());
+			System.out.println("Balance: " + acc.getBalance() + "\n");
 		}
 	}
 }

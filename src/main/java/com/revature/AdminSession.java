@@ -26,9 +26,9 @@ public class AdminSession {
 		System.out.println("2. Approve open account.");
 		System.out.println("3. (debug, will change to cancel) Delete account.");
 		System.out.println("4. Log out.");
-		System.out.println("5. (debug) Print all users.");
-		System.out.println("6 . (debug) Print all employees.");
-		System.out.println("7. (debug) Print all pending transactions.");
+		System.out.println("5. Print all users.");
+		System.out.println("6. (debug) Print all employees.");
+		System.out.println("7. Edit accounts.");
 		
 		String response = "";
 		while (!sc.hasNext("[1234567]")) {
@@ -63,9 +63,7 @@ public class AdminSession {
 			startAdminSession();
 			break;
 		case("7"):
-			ArrayList<Account> transactionsList = Database.readAllObjects("pending-transactions");
-			Database.printAllObjects(transactionsList);
-			startAdminSession();
+			editAccounts();
 			break;
 		default:
 			break;
@@ -73,31 +71,78 @@ public class AdminSession {
 	}
 	
 	public void viewPendingTransactions() {
-//		ArrayList
+		ArrayList<Account> transactionsList = Database.readAllObjects("pending-transactions");
+		Database.printAllObjects(transactionsList);
+		startAdminSession();
 	}
 	
 	public void approveOpenAccount() {
+		String fileName;
+		boolean validInput = false;
+		ArrayList<Account> list = Database.readAllObjects("pending-transactions");
 		
+		System.out.println("Type username to approve:");
+		String username = sc.next();
+		validInput = validateUsername(username, "pending-transactions");
+		while(!validInput) {
+			System.out.println("This username does not exist, try again.");
+			username = sc.next();
+			validInput = validateUsername(username, "pending-transactions");
+		}
+		
+		int index = Database.getObjectIndex("pending-transactions", username);
+		Account newAccount = list.get(index);
+		list.remove(index);
+		Database.writeFromArrayList("pending-transactions", list);
+		
+		Database.writeObject("accounts", newAccount);
+		
+		startAdminSession();
 	}
 	
 	public void deleteAccount() {
-		ArrayList<Account> accountsList = Database.readAllObjects("accounts");
-		boolean validInput = false;
+		String fileName;
+		System.out.println("Choose database to access: ");
+		System.out.println("1. Accounts");
+		System.out.println("2. Pending Transactions");
 		
+		String response = "";
+		while (!sc.hasNext("[12]")) {
+			System.out.println("Invalid input, try again");
+			sc.next();
+		}
+		response = sc.next();
+		System.out.println();
+		
+		switch(response) {
+		case("1"):
+			fileName = "accounts";
+			break;
+		case("2"):
+			fileName = "pending-transactions";
+			break;
+		default:
+			fileName = "pending-transactions";
+			break;
+		}
+		
+		ArrayList<Account> list = Database.readAllObjects(fileName);
+		
+		boolean validInput = false;
 		System.out.println("Type account name to delete: ");
 		String username = sc.next();
-		validInput = validateUsername(username, "accounts");
+		validInput = validateUsername(username, fileName);
 		while (!validInput) {
 			System.out.println("This username does not exist, try again: ");
 			username = sc.next();
-			validInput = validateUsername(username, "accounts");
+			validInput = validateUsername(username, fileName);
 		}
 		
-		int index = Database.getObjectIndex("accounts", username);
-		Account account = accountsList.get(index);
-		accountsList.remove(index);
+		int index = Database.getObjectIndex(fileName, username);
+		Account account = list.get(index);
+		list.remove(index);
 		
-		Database.writeFromArrayList("accounts", accountsList);
+		Database.writeFromArrayList(fileName, list);
 		
 		startAdminSession();
 	}
@@ -113,5 +158,98 @@ public class AdminSession {
 		}
 		
 		return validUsername;
+	}
+	
+	public void editAccounts() {
+		String fileName;
+		System.out.println("Choose database to access: ");
+		System.out.println("1. Accounts");
+		System.out.println("2. Employees");
+		
+		String response = "";
+		while (!sc.hasNext("[12]")) {
+			System.out.println("Invalid input, try again");
+			sc.next();
+		}
+		response = sc.next();
+		System.out.println();
+		
+		switch(response) {
+		case("1"):
+			fileName = "accounts";
+			break;
+		case("2"):
+			fileName = "employees";
+			break;
+		default:
+			fileName = "";
+			break;
+		}
+		ArrayList<Account> list = Database.readAllObjects(fileName);
+		
+		boolean validInput = false;
+		System.out.println("Enter username of the account to edit: ");
+		String username = sc.next();
+		validInput = validateUsername(username, fileName);
+		while (!validInput) {
+			System.out.println("This username does not exist, try again: ");
+			username = sc.next();
+			validInput = validateUsername(username, fileName);
+		}
+		
+		int index = Database.getObjectIndex(fileName, username);
+		Account account = list.get(index);
+		
+		if (account.getUsername().equals("superadmin")) {
+			System.out.println("You cannot modify this account. \n");
+		}
+		else {
+			System.out.println("Choose a field to edit: ");
+			System.out.println("1. Username");
+			System.out.println("2. Password");
+			System.out.println("3. First name");
+			System.out.println("4. Last name");
+			System.out.println("5. Balance");
+			
+			while(!sc.hasNext("[12345]")) {
+				System.out.println("Invalid input, try again");
+				sc.next();
+			}
+			response = sc.next();
+			System.out.println();
+			
+			switch (response) {
+			case("1"):
+				System.out.println("Enter new username: ");
+				String newUsername = sc.next();
+				account.setUsername(newUsername);
+				break;
+			case("2"):
+				System.out.println("Enter new password: ");
+				String newPassword = sc.next();
+				account.setPassword(newPassword);
+				break;
+			case("3"):
+				System.out.println("Enter new name: ");
+				String newName = sc.next();
+				account.setFirstName(newName);
+				break;
+			case("4"):
+				System.out.println("Enter new las name:");
+				String newLastName = sc.next();
+				account.setLastName(newLastName);
+				break;
+			case("5"):
+				System.out.println("Enter new balance:");
+				long newBalance = sc.nextLong();
+				account.setBalance(newBalance); 
+				break;
+			default:
+				break;
+			}
+			list.set(index, account);
+			Database.writeFromArrayList(fileName, list);
+		}
+		startAdminSession();
 	}
 }
