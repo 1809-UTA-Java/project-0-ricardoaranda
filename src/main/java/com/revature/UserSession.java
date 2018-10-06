@@ -137,7 +137,26 @@ public class UserSession {
 	}
 	
 	public void linkAccounts() {
+		System.out.println("Type the username you would like your account to link to: ");
 		
+		String otherUsername = sc.next();
+		while (!validateUsername(otherUsername, "accounts")) {
+			System.out.println("That account does not exist, try again.");
+			otherUsername = sc.next();
+		}
+		System.out.println();
+		
+		int otherIndex = Database.getObjectIndex("accounts", otherUsername);
+		Account otherAccount = accountsList.get(otherIndex);
+		
+		ArrayList<String> link = new ArrayList<>();
+		link.add(account.getUsername());
+		link.add(otherAccount.getUsername());
+		ArrayList<ArrayList<String>> listOfLinks = Database.readAllObjects("join-accounts");
+		listOfLinks.add(link);
+		Database.writeFromArrayList("join-accounts", listOfLinks);
+		
+		startUserSession();
 	}
 	
 	public void printAccountInformation() {

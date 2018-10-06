@@ -26,12 +26,13 @@ public class AdminSession {
 		System.out.println("2. Approve open account.");
 		System.out.println("3. (debug, will change to cancel) Delete account.");
 		System.out.println("4. Log out.");
-		System.out.println("5. Print all users.");
-		System.out.println("6. (debug) Print all employees.");
+		System.out.println("5. View all users.");
+		System.out.println("6. (debug) View all employees.");
 		System.out.println("7. Edit accounts.");
+		System.out.println("8. View join accounts.");
 		
 		String response = "";
-		while (!sc.hasNext("[1234567]")) {
+		while (!sc.hasNext("[12345678]")) {
 			System.out.println("Invalid input, try again");
 			sc.next();
 		}
@@ -64,6 +65,10 @@ public class AdminSession {
 			break;
 		case("7"):
 			editAccounts();
+			break;
+		case("8"):
+			/* viewJoinAccounts(); */
+			Database.printJoinAccounts();
 			break;
 		default:
 			break;

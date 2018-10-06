@@ -15,6 +15,7 @@ public class Database {
     	File usersPath = new File("accounts");
     	File employeesPath = new File("employees");
     	File transactionsPath = new File ("pending-transactions");
+    	File joinAccounts = new File("join-accounts");
     	
     	if (!usersPath.exists()) {
     		try {
@@ -42,6 +43,13 @@ public class Database {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+    	}
+    	if (!joinAccounts.exists()) {
+    		try {
+    			joinAccounts.createNewFile();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
     	}
     }
 	
@@ -86,7 +94,7 @@ public class Database {
 		
 	}
 	
-	static void writeFromArrayList(String fileName, ArrayList<Account> accountsList) {
+	static <T> void writeFromArrayList(String fileName, ArrayList<T> accountsList) {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream (fileName))) {
 			oos.writeObject(accountsList);
 			
@@ -97,8 +105,8 @@ public class Database {
 		}
 	}
 	
-	static public ArrayList<Account> readAllObjects(String fileName) {
-		ArrayList<Account> accountsList = new ArrayList<>();
+	static <T> ArrayList<T> readAllObjects(String fileName) {
+		ArrayList<T> accountsList = new ArrayList<>();
 		File path = new File(fileName);
 		
 		if (path.isFile() && path.length() == 0) {
@@ -106,7 +114,7 @@ public class Database {
 		}
 		else {
 			try (ObjectInputStream ois= new ObjectInputStream(new FileInputStream(fileName))) {
-				accountsList = (ArrayList<Account>) ois.readObject();
+				accountsList = (ArrayList<T>) ois.readObject();
 				
 				ois.close();
 			}
@@ -138,6 +146,16 @@ public class Database {
 			System.out.println("Account ID: + " + acc.getAccountId());
 			System.out.println("Account type: " + acc.getAccountType());
 			System.out.println("Balance: " + acc.getBalance() + "\n");
+		}
+	}
+	
+	static public void printJoinAccounts () {
+		ArrayList<ArrayList<String>> list = Database.readAllObjects("join-accounts");
+		Iterator<ArrayList<String>> listIt = list.iterator();
+		System.out.println("Printing join lists");
+		while (listIt.hasNext()) {
+			ArrayList<String> link = listIt.next();
+			System.out.println(link.toString());
 		}
 	}
 }

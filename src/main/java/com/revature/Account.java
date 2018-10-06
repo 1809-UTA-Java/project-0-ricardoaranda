@@ -18,7 +18,6 @@ public abstract class Account implements Serializable {
 	protected long balance;
 	protected UUID accountId;
 	protected AccountType accountType;
-	protected ArrayList<String> linkedAccounts;
 	private static final long serialVersionUID = 1;
 
 	public Account() {
@@ -118,14 +117,6 @@ public abstract class Account implements Serializable {
 
 	public void setBalance(long balance) {
 		this.balance = balance;
-	}
-	
-	public ArrayList<String> getLinkedAccounts() {
-		return linkedAccounts;
-	}
-	// might need to change this
-	public void setLinkedAccounts(ArrayList<String> linkedAccounts) {
-		this.linkedAccounts = linkedAccounts;
 	}
 
 	@Override
