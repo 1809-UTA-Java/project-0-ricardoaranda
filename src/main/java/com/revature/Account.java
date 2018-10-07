@@ -5,7 +5,7 @@ import java.util.UUID;
 import java.util.ArrayList;
 
 public abstract class Account implements Serializable {
-	enum AccountType {
+	public enum AccountType {
 		CHECKINGS, SAVINGS
 	}
 	
