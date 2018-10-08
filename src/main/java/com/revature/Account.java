@@ -15,6 +15,7 @@ public abstract class Account implements Serializable {
 	protected String lastName;
 	protected boolean isAdmin;
 	protected boolean isSuperAdmin;
+	protected boolean isActive;
 	protected long balance;
 	protected UUID accountId;
 	protected AccountType accountType;
@@ -27,13 +28,14 @@ public abstract class Account implements Serializable {
 		this.lastName = "";
 		this.isAdmin = false;
 		this.isSuperAdmin = false;
+		this.isActive = false;
 		this.balance = 0;
 		this.accountId = UUID.randomUUID();
 		this.accountType = AccountType.CHECKINGS;
 		
 	}
 	
-	public Account(String firstName, String lastName, String username, String password, boolean isAdmin, boolean isSuperAdmin, long balance) {
+	public Account(String firstName, String lastName, String username, String password, boolean isAdmin, boolean isSuperAdmin, boolean isActive, long balance) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
@@ -42,7 +44,33 @@ public abstract class Account implements Serializable {
 		this.accountType = AccountType.CHECKINGS;
 		this.isAdmin = isAdmin;
 		this.isSuperAdmin = isSuperAdmin;
+		this.isActive = isActive;
 		this.balance = balance;
+	}
+	
+	public void setAccountId(UUID accountId) {
+		this.accountId = accountId;
+	}
+
+	public Account(String firstName, String lastName, String username, String password, UUID accountId, boolean isAdmin, boolean isSuperAdmin, boolean isActive, long balance) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.password = password;
+		this.accountId = accountId;
+		this.accountType = AccountType.CHECKINGS;
+		this.isAdmin = isAdmin;
+		this.isSuperAdmin = isSuperAdmin;
+		this.isActive = isActive;
+		this.balance = balance;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public String getUsername() {
