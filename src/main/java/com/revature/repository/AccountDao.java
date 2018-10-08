@@ -33,10 +33,6 @@ public class AccountDao {
             
             ps.executeUpdate();
             
-//            int rowcount = databaseUpdate(conn, ps);
-//            if (rowcount != 1) {
-//                 throw new SQLException("PrimaryKey Error when updating DB!");
-//            }
 		}catch (SQLException ex) {
 			ex.getMessage();
 		} catch (IOException ex) {
@@ -68,8 +64,8 @@ public class AccountDao {
 				String lastName = rs.getString("a_lastname");
 				String id = rs.getString("a_id");
 				String accountType = rs.getString("a_accounttype");
-				boolean isAdmin = (rs.getString("a_isAdmin") == "0" ? false : true);
-				boolean active = (rs.getString("a_active") == "0" ? false : true);
+				boolean isAdmin = (rs.getString("a_isAdmin") == "1" ? true : false);
+				boolean active = (rs.getString("a_active") == "1" ? true : false);
 				long balance = (rs.getLong("a_balance"));
 				
 				
@@ -97,6 +93,42 @@ public class AccountDao {
 		}
 		
 		return a;
+	}
+	
+	public void saveAccountState(Account account) {
+		PreparedStatement ps = null;
+		String sql = "UPDATE USER_ACCOUNTS SET a_username = ?, a_password = ?, a_firstName = ?, "
+	               + "a_lastName = ?, a_accountType = ?, a_isAdmin = ?, "
+	               + "a_active = ?, a_balance = ? WHERE (a_id = ? ) ";
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, account.getUsername());
+			ps.setString(2, account.getPassword());
+			ps.setString(3, account.getFirstName());
+			ps.setString(4, account.getLastName());
+			ps.setString(5, account.getAccountType() == AccountType.CHECKINGS ? "CHECKINGS" : "SAVINGS");
+			ps.setInt(6, account.isAdmin() == true ? 1 : 0);
+			ps.setInt(7, account.isActive() == true ? 1 : 0);
+			ps.setLong(8, account.getBalance());
+			
+			ps.setString(9, account.getAccountId().toString());
+			
+			ps.executeUpdate();
+			
+		} catch (SQLException ex) {
+			ex.getMessage();
+		} catch (IOException ex) {
+			ex.getMessage();
+		}  finally {
+            if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+      }
+		
 	}
 	
 	protected int databaseUpdate(Connection conn, PreparedStatement stmt) throws SQLException {

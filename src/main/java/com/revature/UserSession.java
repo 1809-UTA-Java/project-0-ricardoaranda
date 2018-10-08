@@ -3,22 +3,20 @@ package com.revature;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-// TODO: implement linkAccounts()
+import com.revature.repository.AccountDao;
+
 public class UserSession {
-	ArrayList <Account> accountsList;
-	String fileName;
 	String username;
 	Scanner sc;
-	int index;
 	Account account;
+	AccountDao adao;
 	
 	public UserSession(Scanner scanner, String usernameArg) {
-		fileName = "accounts";
 		username = usernameArg;
-		accountsList = Database.readAllObjects(fileName);
 		sc = scanner;
-		index = Database.getObjectIndex(fileName, username);
-		account = accountsList.get(index);
+		adao = new AccountDao();
+		
+		account = adao.getAccountByUserName(username);
 	}
 	
 	public void startUserSession() {
@@ -77,7 +75,7 @@ public class UserSession {
 		account.setBalance(account.getBalance() + ammount);
 		
 		System.out.println(account.getFirstName() + "'s new balance: $" + account.getBalance() + '\n');
-		Database.writeFromArrayList(fileName, accountsList);
+		adao.saveAccountState(account);
 		
 		startUserSession();
 	}
@@ -95,68 +93,68 @@ public class UserSession {
 		
 		account.setBalance((account.getBalance() - ammount));
 		System.out.println(account.getFirstName() + "'s new balance: $" + account.getBalance() + '\n');
-		Database.writeFromArrayList(fileName, accountsList);
+		adao.saveAccountState(account);
 		
 		startUserSession();
 	}
 	
 	public void transfer() {
-		System.out.println("Type the username of the account you would like to transfer funds to: ");
-		
-		String recipientUsername = sc.next();
-		boolean validInput = validateUsername(recipientUsername, "accounts");
-		while(!validInput) {
-			System.out.println("That account does not exist. Try again: ");
-			recipientUsername = sc.next();
-			validInput = validateUsername(recipientUsername, "accounts");
-		}
-		
-		int recipientIndex = Database.getObjectIndex("accounts", recipientUsername);
-		Account recipientAccount = accountsList.get(recipientIndex);
-		
-		long ammount;
-		do {
-			System.out.println("How much would you like to transfer?");
-			while (!sc.hasNextLong()) {
-				sc.nextLong();
-			}
-			ammount = sc.nextLong();
-		} while (!evaluateTransfer(ammount, account.getBalance()));
-		
-		account.setBalance(account.getBalance() - ammount);
-		recipientAccount.setBalance(recipientAccount.getBalance() + ammount);
-				
-		System.out.println("Your new balance: " + account.getBalance());
-		System.out.println();
-		
-		accountsList.set(recipientIndex, recipientAccount);
-		accountsList.set(index, account);
-		Database.writeFromArrayList("accounts", accountsList);
-		
-		startUserSession();
+//		System.out.println("Type the username of the account you would like to transfer funds to: ");
+//		
+//		String recipientUsername = sc.next();
+//		boolean validInput = validateUsername(recipientUsername, "accounts");
+//		while(!validInput) {
+//			System.out.println("That account does not exist. Try again: ");
+//			recipientUsername = sc.next();
+//			validInput = validateUsername(recipientUsername, "accounts");
+//		}
+//		
+//		int recipientIndex = Database.getObjectIndex("accounts", recipientUsername);
+//		Account recipientAccount = accountsList.get(recipientIndex);
+//		
+//		long ammount;
+//		do {
+//			System.out.println("How much would you like to transfer?");
+//			while (!sc.hasNextLong()) {
+//				sc.nextLong();
+//			}
+//			ammount = sc.nextLong();
+//		} while (!evaluateTransfer(ammount, account.getBalance()));
+//		
+//		account.setBalance(account.getBalance() - ammount);
+//		recipientAccount.setBalance(recipientAccount.getBalance() + ammount);
+//				
+//		System.out.println("Your new balance: " + account.getBalance());
+//		System.out.println();
+//		
+//		accountsList.set(recipientIndex, recipientAccount);
+//		accountsList.set(index, account);
+//		Database.writeFromArrayList("accounts", accountsList);
+//		
+//		startUserSession();
 	}
 	
 	public void linkAccounts() {
-		System.out.println("Type the username you would like your account to link to: ");
-		
-		String otherUsername = sc.next();
-		while (!validateUsername(otherUsername, "accounts")) {
-			System.out.println("That account does not exist, try again.");
-			otherUsername = sc.next();
-		}
-		System.out.println();
-		
-		int otherIndex = Database.getObjectIndex("accounts", otherUsername);
-		Account otherAccount = accountsList.get(otherIndex);
-		
-		ArrayList<String> link = new ArrayList<>();
-		link.add(account.getUsername());
-		link.add(otherAccount.getUsername());
-		ArrayList<ArrayList<String>> listOfLinks = Database.readAllObjects("join-accounts");
-		listOfLinks.add(link);
-		Database.writeFromArrayList("join-accounts", listOfLinks);
-		
-		startUserSession();
+//		System.out.println("Type the username you would like your account to link to: ");
+//		
+//		String otherUsername = sc.next();
+//		while (!validateUsername(otherUsername, "accounts")) {
+//			System.out.println("That account does not exist, try again.");
+//			otherUsername = sc.next();
+//		}
+//		System.out.println();
+//		
+//		int otherIndex = Database.getObjectIndex("accounts", otherUsername);
+//		Account otherAccount = accountsList.get(otherIndex);
+//		
+//		ArrayList<String> link = new ArrayList<>();
+//		link.add(account.getUsername());
+//		link.add(otherAccount.getUsername());
+//		ArrayList<ArrayList<String>> listOfLinks = Database.readAllObjects("join-accounts");
+//		listOfLinks.add(link);
+//		Database.writeFromArrayList("join-accounts", listOfLinks);
+//		
+//		startUserSession();
 	}
 	
 	public void printAccountInformation() {

@@ -1,13 +1,9 @@
 package com.revature;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.UUID;
 
 import com.revature.repository.AccountDao;
-import com.revature.util.ConnectionUtil;
 
 public class App 
 {
@@ -27,13 +23,13 @@ public class App
     		adao.createAccount(account);
     	}
     	
-//    			
+    			
 //    	Database.initialize();
     	Scanner scanner = new Scanner(System.in);
-//    	
+    	
 		Session session = new Session(scanner);
 		session.startProgram();
-//		
+		
 		scanner.close();
     }
 }

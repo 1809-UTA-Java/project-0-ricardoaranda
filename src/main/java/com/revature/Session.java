@@ -3,6 +3,8 @@ package com.revature;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.revature.repository.AccountDao;
+
 public class Session {
 	boolean isLoggedIn;
 	boolean isAdmin;
@@ -47,80 +49,89 @@ public class Session {
     }
 	
 	private void login() {
-		boolean validInput = false;
+		Account a = null;
+		AccountDao adao = new AccountDao();
 		
 		System.out.println("Log In: ");
 		System.out.println("Enter your username: ");
 		
 		String username = sc.next();
-		validInput = validateUsername(username, userFileName);
-		while (!validInput) {
+		a = adao.getAccountByUserName(username);
+		while (a == null) {
 			System.out.println("This username does not exist, try again: ");
 			username = sc.next();
-			validInput = validateUsername(username, userFileName);
+			a = adao.getAccountByUserName(username);
 		}
 		
 		System.out.println("Enter your password: ");
 		
 		String password = sc.next();
-		validInput = false;
-		validInput = validatePassword(username, password, userFileName);
-		while (!validInput) {
+		while (!a.getPassword().equals(password)) {
 			System.out.println("Password does not match, try again: ");
 			password = sc.next();
-			validInput = validatePassword(username, password, userFileName);
 		}
 		System.out.println();
 		
-		UserSession userSession = new UserSession(sc, username);
-		userSession.startUserSession();
+		if (a.isAdmin) {
+			AdminSession newSession = new AdminSession(sc, username);
+			newSession.startAdminSession();
+		}
+		else {
+			UserSession userSession = new UserSession(sc, username);
+			userSession.startUserSession();
+		}
 	}
 	
 	public void loginAsAdmin() {
-		boolean validInput = false;
-		
-		System.out.println("Log in as admin: ");
-		System.out.println("Enter username: ");
-		
-		String username = sc.next();
-		validInput = validateUsername(username, employeeFileName);
-		while (!validInput) {
-			System.out.println("This username does not exist, try again: ");
-			username = sc.next();
-			validInput = validateUsername(username, employeeFileName);
-		}
-		
-		System.out.println("Enter your password: ");
-		
-		String password = sc.next();
-		validInput = false;
-		validInput = validatePassword(username, password, employeeFileName);
-		while (!validInput) {
-			System.out.println("Password does not match, try again: ");
-			password = sc.next();
-			validInput = validatePassword(username, password, employeeFileName);
-		}
-		System.out.println();
-		
-		AdminSession adminSession = new AdminSession(sc, username);
-		adminSession.startAdminSession();
+//		boolean validInput = false;
+//		
+//		System.out.println("Log in as admin: ");
+//		System.out.println("Enter username: ");
+//		
+//		String username = sc.next();
+//		validInput = validateUsername(username, employeeFileName);
+//		while (!validInput) {
+//			System.out.println("This username does not exist, try again: ");
+//			username = sc.next();
+//			validInput = validateUsername(username, employeeFileName);
+//		}
+//		
+//		System.out.println("Enter your password: ");
+//		
+//		String password = sc.next();
+//		validInput = false;
+//		validInput = validatePassword(username, password, employeeFileName);
+//		while (!validInput) {
+//			System.out.println("Password does not match, try again: ");
+//			password = sc.next();
+//			validInput = validatePassword(username, password, employeeFileName);
+//		}
+//		System.out.println();
+//		
+//		AdminSession adminSession = new AdminSession(sc, username);
+//		adminSession.startAdminSession();
 	}
 	
 	private void createAccount() {
-		Account newAccount = new UserAccount();
-		String input;
-		
+		Account newAccount = null;
+		AccountDao adao = new AccountDao();
+		String username;
+
 		System.out.println("Enter a username: ");
-		input = sc.next();
-		while (validateUsername(input, userFileName)) {
+		username = sc.next();
+		newAccount = adao.getAccountByUserName(username);
+		while (newAccount != null) {
 			System.out.println("That username already exists. Try another:");
-			input = sc.next();
+			username = sc.next();
+			newAccount = adao.getAccountByUserName(username);
 		}
-		newAccount.setUsername(input);
+		newAccount = new UserAccount();
 		
+		newAccount.setUsername(username);
+
 		System.out.println("Enter a password: ");
 		newAccount.setPassword(sc.next());
-		
+
 		System.out.println("Enter your first name: ");
 		newAccount.setFirstName(sc.next());
 		
@@ -133,33 +144,35 @@ public class Session {
 		}
 		
 		newAccount.setAdmin(false);
+		newAccount.setActive(false);
 		
-		Database.writeObject(pendingTransactionsFileName, newAccount);
+		adao.createAccount(newAccount);
 		
 		System.out.println("Your request for a new account has been submitted.");
+		System.out.println();
 		
 		startProgram();
 	}
 	
-	public boolean validateUsername(String input, String fileName) {
-		ArrayList<Account> list = Database.readAllObjects(fileName);
-		boolean validUsername = false;
-		
-		for (Account a : list) {
-			if (a.getUsername() != null && a.getUsername().contains(input)) {
-				validUsername = true;
-			}
-		}
-		
-		return validUsername;
-	}
+//	public boolean validateUsername(String input) {
+//		ArrayList<Account> list = Database.readAllObjects(fileName);
+//		boolean validUsername = false;
+//		
+//		for (Account a : list) {
+//			if (a.getUsername() != null && a.getUsername().contains(input)) {
+//				validUsername = true;
+//			}
+//		}
+//		
+//		return validUsername;
+//	}
 	
-	public boolean validatePassword(String username, String password, String fileName) {
-		ArrayList<Account> list = Database.readAllObjects(fileName);
-		int index = Database.getObjectIndex(fileName, username);
-		if (list.get(index).getPassword().equals(password))
-			return true;
-		
-		return false;
-	}
+//	public boolean validatePassword(String username, String password, String fileName) {
+//		ArrayList<Account> list = Database.readAllObjects(fileName);
+//		int index = Database.getObjectIndex(fileName, username);
+//		if (list.get(index).getPassword().equals(password))
+//			return true;
+//		
+//		return false;
+//	}
 }
