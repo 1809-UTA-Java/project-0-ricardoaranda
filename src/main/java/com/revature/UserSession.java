@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.revature.repository.AccountDao;
+import com.revature.repository.JoinAccountDao;
 
 public class UserSession {
 	// TODO: link accounts

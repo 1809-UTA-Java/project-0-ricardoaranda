@@ -8,5 +8,13 @@ CREATE TABLE USER_ACCOUNTS (
     a_isAdmin number(1) default 0,
     a_active number(1) default 0,
     a_balance number(15),
+    a_join_id varchar2(36),
 primary key (a_id)
 );
+
+CREATE TABLE JOIN_ACCOUNTS (
+    a_join_id varchar2(36) not null,
+    a_account_id varchar2(36) not null,
+primary key (a_join_id)
+);
+

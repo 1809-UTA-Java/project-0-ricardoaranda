@@ -2,14 +2,11 @@ package com.revature.repository;
 
 import com.revature.Account;
 import com.revature.UserAccount;
-
 import com.revature.Account.AccountType;
-import com.revature.util.*;
 
+import com.revature.util.*;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class AccountDao {
@@ -35,7 +32,7 @@ public class AccountDao {
             
             ps.executeUpdate();
             
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			ex.getMessage();
 		} catch (IOException ex) {
 			ex.getMessage();
@@ -273,6 +270,27 @@ public class AccountDao {
 		}
 		
 //		return accounts;
+	}
+	
+	public UUID retrieveJoinId(UUID accountId) {
+		String sql = "SELECT A_JOIN_ID FROM USER_ACCOUNTS WHERE (a_id = ?)";
+		PreparedStatement ps = null;
+		UUID joinId = null;
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, accountId.toString());
+			ResultSet rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				joinId = UUID.fromString(rs.getString("a_join_id"));
+			}
+		} catch (SQLException ex) {
+			ex.getMessage();
+		} catch (IOException ex) {
+			ex.getMessage();
+		}
+		return joinId;
 	}
 	
 	protected int databaseUpdate(Connection conn, PreparedStatement stmt) throws SQLException {

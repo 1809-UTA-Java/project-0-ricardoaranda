@@ -3,6 +3,7 @@ package com.revature;
 import java.util.Scanner;
 
 import com.revature.repository.AccountDao;
+import com.revature.repository.JoinAccountDao;
 
 public class AdminSession {
 	String username;
@@ -21,7 +22,7 @@ public class AdminSession {
 		System.out.println("Choose one of the options from the menu: ");
 		System.out.println("1. View pending transactions. ");
 		System.out.println("2. Approve open account.");
-		System.out.println("3. (debug, will change to cancel) Delete account.");
+		System.out.println("3. Delete account.");
 		System.out.println("4. Log out.");
 		System.out.println("5. View all users."); 		
 		System.out.println("6. View all employees.");
