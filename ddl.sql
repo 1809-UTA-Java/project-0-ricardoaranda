@@ -14,7 +14,6 @@ primary key (a_id)
 
 CREATE TABLE JOIN_ACCOUNTS (
     a_join_id varchar2(36) not null,
-    a_account_id varchar2(36) not null,
-primary key (a_join_id)
+    a_account_id varchar2(36) not null
 );
 

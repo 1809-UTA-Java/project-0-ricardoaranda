@@ -2,6 +2,7 @@ package com.revature;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.UUID;
 
 import com.revature.repository.AccountDao;
 import com.revature.repository.JoinAccountDao;
@@ -132,26 +133,25 @@ public class UserSession {
 	}
 	
 	public void linkAccounts() {
-//		System.out.println("Type the username you would like your account to link to: ");
-//		
-//		String otherUsername = sc.next();
-//		while (!validateUsername(otherUsername, "accounts")) {
-//			System.out.println("That account does not exist, try again.");
-//			otherUsername = sc.next();
-//		}
-//		System.out.println();
-//		
-//		int otherIndex = Database.getObjectIndex("accounts", otherUsername);
-//		Account otherAccount = accountsList.get(otherIndex);
-//		
-//		ArrayList<String> link = new ArrayList<>();
-//		link.add(account.getUsername());
-//		link.add(otherAccount.getUsername());
-//		ArrayList<ArrayList<String>> listOfLinks = Database.readAllObjects("join-accounts");
-//		listOfLinks.add(link);
-//		Database.writeFromArrayList("join-accounts", listOfLinks);
-//		
-//		startUserSession();
+		Account otherAccount = null;
+		JoinAccountDao jdao = new JoinAccountDao();
+		jdao.createJoinAccount(account);
+		UUID joinId = adao.retrieveJoinId(account.getAccountId());
+//		System.out.println(joinId);
+		
+		System.out.println("Type username wich you would like to link to: ");
+		String otherUsername = sc.next();
+		otherAccount = adao.getAccountByUserName(otherUsername);
+		while (otherAccount == null) {
+			System.out.println("That account does not exist, try again.");
+			otherUsername = sc.next();
+			otherAccount = adao.getAccountByUserName(otherUsername);
+		}
+//		System.out.println("Adding other account");
+//		System.out.println(otherAccount.getUsername() + joinId);
+		jdao.addToJoinAccount(otherAccount, joinId);
+		
+		startUserSession();
 	}
 	
 	public void printAccountInformation() {

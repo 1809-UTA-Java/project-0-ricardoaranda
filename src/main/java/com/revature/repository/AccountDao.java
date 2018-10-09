@@ -287,10 +287,30 @@ public class AccountDao {
 			}
 		} catch (SQLException ex) {
 			ex.getMessage();
+		} catch (NullPointerException ex) {
+			
 		} catch (IOException ex) {
 			ex.getMessage();
 		}
 		return joinId;
+	}
+	
+	public void updateAccountJoinId(Account account, UUID joinId) {
+		String sql = "UPDATE USER_ACCOUNTS SET a_join_id = ? WHERE (a_id = ?)";
+		PreparedStatement ps = null;
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {			
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, joinId.toString());
+			ps.setString(2, account.getAccountId().toString());
+			
+			ps.executeUpdate();
+
+		} catch (SQLException ex) {
+			ex.getMessage();
+		} catch (IOException ex) {
+			ex.getMessage();
+		}
 	}
 	
 	protected int databaseUpdate(Connection conn, PreparedStatement stmt) throws SQLException {
