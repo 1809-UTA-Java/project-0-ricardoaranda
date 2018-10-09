@@ -8,6 +8,8 @@ import com.revature.util.*;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class AccountDao {
@@ -64,12 +66,9 @@ public class AccountDao {
 				String lastName = rs.getString("a_lastname");
 				String id = rs.getString("a_id");
 				String accountType = rs.getString("a_accounttype");
-				boolean isAdmin = (rs.getString("a_isAdmin") == "1" ? true : false);
-				boolean active = (rs.getString("a_active") == "1" ? true : false);
+				boolean isAdmin = (rs.getInt("a_isAdmin") == 1 ? true : false);
+				boolean active = (rs.getInt("a_active") == 1 ? true : false);
 				long balance = (rs.getLong("a_balance"));
-				
-				
-				UUID uid = UUID.fromString(id);
 				
 				a = new UserAccount();
 				
@@ -78,7 +77,7 @@ public class AccountDao {
 				a.setFirstName(firstName);
 				a.setLastName(lastName);
 				
-				
+				UUID uid = UUID.fromString(id);
 				a.setAccountId(uid);
 				
 				a.setAccountType(accountType);
@@ -129,6 +128,151 @@ public class AccountDao {
 				}
       }
 		
+	}
+	
+	public void deleteAccount(Account account) {
+		PreparedStatement ps = null;
+		String sql = "DELETE FROM USER_ACCOUNTS WHERE (a_id = ?)";
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, account.getAccountId().toString());
+			
+			ps.executeUpdate();
+		} 
+		catch (SQLException ex) {
+			ex.getMessage();
+		} 
+		catch (IOException ex) {
+			ex.getMessage();
+		} 
+		finally {
+            if (ps != null)
+				try {
+					ps.close();
+				} 
+            	catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+	}
+	
+	public void viewAllUsers(int x) {
+		PreparedStatement ps = null;
+		Account a = null;
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "SELECT * FROM USER_ACCOUNTS WHERE (a_isAdmin = ?)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, x);
+			ResultSet rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				String userName = rs.getString("a_username");
+				String password = rs.getString("a_password");
+				String firstName = rs.getString("a_firstname");
+				String lastName = rs.getString("a_lastname");
+				String id = rs.getString("a_id");
+				String accountType = rs.getString("a_accounttype");
+				boolean isAdmin = (rs.getInt("a_isAdmin") == 1 ? true : false);
+				boolean active = (rs.getInt("a_active") == 1 ? true : false);
+				long balance = (rs.getLong("a_balance"));
+				
+				a = new UserAccount();
+				
+				a.setUsername(userName);
+				a.setPassword(password);
+				a.setFirstName(firstName);
+				a.setLastName(lastName);
+				
+				UUID uid = UUID.fromString(id);
+				a.setAccountId(uid);
+				
+				a.setAccountType(accountType);
+				a.setAdmin(isAdmin);
+				a.setActive(active);
+				a.setBalance(balance);
+				
+				System.out.println(a.toString());
+			}
+			rs.close();
+		} 
+		catch (SQLException ex) {
+			ex.getMessage();
+		} 
+		catch (IOException ex) {
+			ex.getMessage();
+		} 
+		finally {
+            if (ps != null)
+				try {
+					ps.close();
+				} 
+            	catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+	}
+	
+	public void viewPendingTransactions() {
+		PreparedStatement ps = null;
+		Account a = null;
+//		List<Account> accounts = new ArrayList<>();
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "SELECT * FROM USER_ACCOUNTS WHERE (a_active = ?)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, 0);
+			ResultSet rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				String userName = rs.getString("a_username");
+				String password = rs.getString("a_password");
+				String firstName = rs.getString("a_firstname");
+				String lastName = rs.getString("a_lastname");
+				String id = rs.getString("a_id");
+				String accountType = rs.getString("a_accounttype");
+				boolean isAdmin = (rs.getInt("a_isAdmin") == 1 ? true : false);
+				boolean active = (rs.getInt("a_active") == 1 ? true : false);
+				long balance = (rs.getLong("a_balance"));
+				
+				a = new UserAccount();
+				
+				a.setUsername(userName);
+				a.setPassword(password);
+				a.setFirstName(firstName);
+				a.setLastName(lastName);
+				
+				UUID uid = UUID.fromString(id);
+				a.setAccountId(uid);
+				
+				a.setAccountType(accountType);
+				a.setAdmin(isAdmin);
+				a.setActive(active);
+				a.setBalance(balance);
+				
+//				accounts.add(a);
+				System.out.println(a.toString());
+			}
+			rs.close();
+		} 
+		catch (SQLException ex) {
+			ex.getMessage();
+		} 
+		catch (IOException ex) {
+			ex.getMessage();
+		} 
+		finally {
+            if (ps != null)
+				try {
+					ps.close();
+				} 
+            	catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		
+//		return accounts;
 	}
 	
 	protected int databaseUpdate(Connection conn, PreparedStatement stmt) throws SQLException {

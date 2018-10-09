@@ -23,8 +23,7 @@ public class App
     		adao.createAccount(account);
     	}
     	
-    			
-//    	Database.initialize();
+    	
     	Scanner scanner = new Scanner(System.in);
     	
 		Session session = new Session(scanner);

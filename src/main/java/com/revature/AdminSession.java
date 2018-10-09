@@ -1,23 +1,20 @@
 package com.revature;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.revature.repository.AccountDao;
+
 public class AdminSession {
-	ArrayList <Account> accountsList;
-	String fileName;
 	String username;
 	Scanner sc;
-	int index;
 	Account account;
+	AccountDao adao;
 	
 	public AdminSession(Scanner scanner, String usernameArg) {
-		fileName = "employees";
 		username = usernameArg;
-		accountsList = Database.readAllObjects("employees");
 		sc = scanner;
-		index = Database.getObjectIndex("employees", username);
-		account = accountsList.get(index);
+		adao = new AccountDao();
+		account = adao.getAccountByUserName(username);
 	}
 	
 	public void startAdminSession() {
@@ -26,8 +23,8 @@ public class AdminSession {
 		System.out.println("2. Approve open account.");
 		System.out.println("3. (debug, will change to cancel) Delete account.");
 		System.out.println("4. Log out.");
-		System.out.println("5. View all users.");
-		System.out.println("6. (debug) View all employees.");
+		System.out.println("5. View all users."); 		
+		System.out.println("6. View all employees.");
 		System.out.println("7. Edit accounts.");
 		System.out.println("8. View join accounts.");
 		
@@ -41,7 +38,8 @@ public class AdminSession {
 		
 		switch (response) {
 		case("1"):
-			viewPendingTransactions();
+			adao.viewPendingTransactions();
+			startAdminSession();
 			break;
 		case("2"):
 			approveOpenAccount();
@@ -54,13 +52,11 @@ public class AdminSession {
 			session.startProgram();
 			break;
 		case("5"):
-			ArrayList<Account> accountsList = Database.readAllObjects("accounts");
-			Database.printAllObjects(accountsList);
+			adao.viewAllUsers(0);
 			startAdminSession();
 			break;
 		case("6"):
-			ArrayList<Account> employeesList = Database.readAllObjects("employees");
-			Database.printAllObjects(employeesList);
+			adao.viewAllUsers(1);
 			startAdminSession();
 			break;
 		case("7"):
@@ -68,144 +64,63 @@ public class AdminSession {
 			break;
 		case("8"):
 			/* viewJoinAccounts(); */
-			Database.printJoinAccounts();
 			break;
 		default:
 			break;
 		}
-	}
-	
-	public void viewPendingTransactions() {
-		ArrayList<Account> transactionsList = Database.readAllObjects("pending-transactions");
-		Database.printAllObjects(transactionsList);
-		startAdminSession();
 	}
 	
 	public void approveOpenAccount() {
-		String fileName;
-		boolean validInput = false;
-		ArrayList<Account> list = Database.readAllObjects("pending-transactions");
+		Account a = new UserAccount();
 		
 		System.out.println("Type username to approve:");
 		String username = sc.next();
-		validInput = validateUsername(username, "pending-transactions");
-		while(!validInput) {
+		a = adao.getAccountByUserName(username);
+		while(a == null) {
 			System.out.println("This username does not exist, try again.");
 			username = sc.next();
-			validInput = validateUsername(username, "pending-transactions");
+			a = adao.getAccountByUserName(username);
 		}
 		
-		int index = Database.getObjectIndex("pending-transactions", username);
-		Account newAccount = list.get(index);
-		list.remove(index);
-		Database.writeFromArrayList("pending-transactions", list);
+		a.setActive(true);
+		adao.saveAccountState(a);
 		
-		Database.writeObject("accounts", newAccount);
+		System.out.println("Approved " + a.getUsername() + ".\n");
 		
 		startAdminSession();
 	}
 	
+	// TEST THIS
 	public void deleteAccount() {
-		String fileName;
-		System.out.println("Choose database to access: ");
-		System.out.println("1. Accounts");
-		System.out.println("2. Pending Transactions");
+		Account a = new UserAccount();
 		
-		String response = "";
-		while (!sc.hasNext("[12]")) {
-			System.out.println("Invalid input, try again");
-			sc.next();
-		}
-		response = sc.next();
-		System.out.println();
-		
-		switch(response) {
-		case("1"):
-			fileName = "accounts";
-			break;
-		case("2"):
-			fileName = "pending-transactions";
-			break;
-		default:
-			fileName = "pending-transactions";
-			break;
-		}
-		
-		ArrayList<Account> list = Database.readAllObjects(fileName);
-		
-		boolean validInput = false;
-		System.out.println("Type account name to delete: ");
+		System.out.println("Type account username to delete: ");
 		String username = sc.next();
-		validInput = validateUsername(username, fileName);
-		while (!validInput) {
+		a = adao.getAccountByUserName(username);
+		while (a == null) {
 			System.out.println("This username does not exist, try again: ");
 			username = sc.next();
-			validInput = validateUsername(username, fileName);
+			a = adao.getAccountByUserName(username);
 		}
 		
-		int index = Database.getObjectIndex(fileName, username);
-		Account account = list.get(index);
-		list.remove(index);
-		
-		Database.writeFromArrayList(fileName, list);
+		adao.deleteAccount(a);
 		
 		startAdminSession();
-	}
-	
-	public boolean validateUsername(String input, String fileName) {
-		ArrayList<Account> list = Database.readAllObjects(fileName);
-		boolean validUsername = false;
-		
-		for (Account a : list) {
-			if (a.getUsername() != null && a.getUsername().contains(input)) {
-				validUsername = true;
-			}
-		}
-		
-		return validUsername;
 	}
 	
 	public void editAccounts() {
-		String fileName;
-		System.out.println("Choose database to access: ");
-		System.out.println("1. Accounts");
-		System.out.println("2. Employees");
+		Account a = new UserAccount();
 		
-		String response = "";
-		while (!sc.hasNext("[12]")) {
-			System.out.println("Invalid input, try again");
-			sc.next();
-		}
-		response = sc.next();
-		System.out.println();
-		
-		switch(response) {
-		case("1"):
-			fileName = "accounts";
-			break;
-		case("2"):
-			fileName = "employees";
-			break;
-		default:
-			fileName = "";
-			break;
-		}
-		ArrayList<Account> list = Database.readAllObjects(fileName);
-		
-		boolean validInput = false;
 		System.out.println("Enter username of the account to edit: ");
 		String username = sc.next();
-		validInput = validateUsername(username, fileName);
-		while (!validInput) {
+		a = adao.getAccountByUserName(username);
+		while (a == null) {
 			System.out.println("This username does not exist, try again: ");
 			username = sc.next();
-			validInput = validateUsername(username, fileName);
+			a = adao.getAccountByUserName(username);
 		}
 		
-		int index = Database.getObjectIndex(fileName, username);
-		Account account = list.get(index);
-		
-		if (account.getUsername().equals("superadmin")) {
+		if (a.getUsername().equals("superadmin")) {
 			System.out.println("You cannot modify this account. \n");
 		}
 		else {
@@ -215,8 +130,9 @@ public class AdminSession {
 			System.out.println("3. First name");
 			System.out.println("4. Last name");
 			System.out.println("5. Balance");
-			System.out.println("6. Permission");
+			System.out.println("6. Permissions");
 			
+			String response = "";
 			while(!sc.hasNext("[12345]")) {
 				System.out.println("Invalid input, try again");
 				sc.next();
@@ -228,36 +144,35 @@ public class AdminSession {
 			case("1"):
 				System.out.println("Enter new username: ");
 				String newUsername = sc.next();
-				account.setUsername(newUsername);
+				a.setUsername(newUsername);
 				break;
 			case("2"):
 				System.out.println("Enter new password: ");
 				String newPassword = sc.next();
-				account.setPassword(newPassword);
+				a.setPassword(newPassword);
 				break;
 			case("3"):
 				System.out.println("Enter new name: ");
 				String newName = sc.next();
-				account.setFirstName(newName);
+				a.setFirstName(newName);
 				break;
 			case("4"):
-				System.out.println("Enter new las name:");
+				System.out.println("Enter new last name:");
 				String newLastName = sc.next();
-				account.setLastName(newLastName);
+				a.setLastName(newLastName);
 				break;
 			case("5"):
 				System.out.println("Enter new balance:");
 				long newBalance = sc.nextLong();
-				account.setBalance(newBalance); 
+				a.setBalance(newBalance); 
 				break;
 			case("6"):
-				account.setAdmin(!account.isAdmin());
+				a.setAdmin(!account.isAdmin());
 				break;
 			default:
 				break;
 			}
-			list.set(index, account);
-			Database.writeFromArrayList(fileName, list);
+			adao.saveAccountState(a);
 		}
 		startAdminSession();
 	}

@@ -6,6 +6,7 @@ import java.util.Scanner;
 import com.revature.repository.AccountDao;
 
 public class UserSession {
+	// TODO: link accounts
 	String username;
 	Scanner sc;
 	Account account;
@@ -15,7 +16,6 @@ public class UserSession {
 		username = usernameArg;
 		sc = scanner;
 		adao = new AccountDao();
-		
 		account = adao.getAccountByUserName(username);
 	}
 	
@@ -99,39 +99,35 @@ public class UserSession {
 	}
 	
 	public void transfer() {
-//		System.out.println("Type the username of the account you would like to transfer funds to: ");
-//		
-//		String recipientUsername = sc.next();
-//		boolean validInput = validateUsername(recipientUsername, "accounts");
-//		while(!validInput) {
-//			System.out.println("That account does not exist. Try again: ");
-//			recipientUsername = sc.next();
-//			validInput = validateUsername(recipientUsername, "accounts");
-//		}
-//		
-//		int recipientIndex = Database.getObjectIndex("accounts", recipientUsername);
-//		Account recipientAccount = accountsList.get(recipientIndex);
-//		
-//		long ammount;
-//		do {
-//			System.out.println("How much would you like to transfer?");
-//			while (!sc.hasNextLong()) {
-//				sc.nextLong();
-//			}
-//			ammount = sc.nextLong();
-//		} while (!evaluateTransfer(ammount, account.getBalance()));
-//		
-//		account.setBalance(account.getBalance() - ammount);
-//		recipientAccount.setBalance(recipientAccount.getBalance() + ammount);
-//				
-//		System.out.println("Your new balance: " + account.getBalance());
-//		System.out.println();
-//		
-//		accountsList.set(recipientIndex, recipientAccount);
-//		accountsList.set(index, account);
-//		Database.writeFromArrayList("accounts", accountsList);
-//		
-//		startUserSession();
+		Account recipientAccount = null;
+		System.out.println("Type the username of the account you would like to transfer funds to: ");
+		
+		String recipientUsername = sc.next();
+		recipientAccount = adao.getAccountByUserName(recipientUsername);
+		while(recipientAccount == null) {
+			System.out.println("That account does not exist. Try again: ");
+			recipientUsername = sc.next();
+			recipientAccount = adao.getAccountByUserName(recipientUsername);
+		}
+		
+		long ammount;
+		do {
+			System.out.println("How much would you like to transfer?");
+			while (!sc.hasNextLong()) {
+				sc.nextLong();
+			}
+			ammount = sc.nextLong();
+		} while (!evaluateTransfer(ammount, account.getBalance()));
+		
+		account.setBalance(account.getBalance() - ammount);
+		recipientAccount.setBalance(recipientAccount.getBalance() + ammount);
+				
+		System.out.println("Your new balance: " + account.getBalance() + '\n');
+		
+		adao.saveAccountState(account);
+		adao.saveAccountState(recipientAccount);
+
+		startUserSession();
 	}
 	
 	public void linkAccounts() {
