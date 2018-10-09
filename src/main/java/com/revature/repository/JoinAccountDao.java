@@ -88,4 +88,33 @@ public class JoinAccountDao {
 			}
 		}
 	}
+	
+	public void removeAccountFromJoin(UUID accountIdToRemove) {
+		String sql = "";
+		PreparedStatement ps = null;
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			sql = "DELETE FROM JOIN_ACCOUNTS WHERE (a_account_id = ?)";
+			ps = conn.prepareStatement(sql);
+			
+			ps.setString(1, accountIdToRemove.toString());
+			
+			ps.executeUpdate();
+		} 
+		catch (SQLException ex) {
+			ex.getMessage();
+		} 
+		catch (IOException ex) {
+			ex.getMessage();
+		} 
+		finally {
+            if (ps != null)
+				try {
+					ps.close();
+				} 
+            	catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+	}
 }

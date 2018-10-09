@@ -104,6 +104,11 @@ public class AdminSession {
 			a = adao.getAccountByUserName(username);
 		}
 		
+		if (adao.retrieveJoinId(a.getAccountId()) != null) {
+			JoinAccountDao jdao = new JoinAccountDao();
+			jdao.removeAccountFromJoin(a.getAccountId());
+		}
+		
 		adao.deleteAccount(a);
 		
 		startAdminSession();
@@ -134,7 +139,7 @@ public class AdminSession {
 			System.out.println("6. Permissions");
 			
 			String response = "";
-			while(!sc.hasNext("[12345]")) {
+			while(!sc.hasNext("[123456]")) {
 				System.out.println("Invalid input, try again");
 				sc.next();
 			}
@@ -168,7 +173,7 @@ public class AdminSession {
 				a.setBalance(newBalance); 
 				break;
 			case("6"):
-				a.setAdmin(!account.isAdmin());
+				a.setAdmin(!a.isAdmin());
 				break;
 			default:
 				break;
