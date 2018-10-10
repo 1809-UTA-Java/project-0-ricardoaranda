@@ -2,6 +2,9 @@ package com.revature;
 
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.revature.repository.AccountDao;
 
 public class Session {

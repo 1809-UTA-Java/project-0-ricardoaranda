@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.revature.repository.AccountDao;
 import com.revature.repository.JoinAccountDao;
 
 public class UserSession {
-	// TODO: link accounts
+	Logger logger = LogManager.getLogger(UserSession.class);
 	String username;
 	Scanner sc;
 	Account account;
@@ -22,6 +25,7 @@ public class UserSession {
 	}
 	
 	public void startUserSession() {
+		logger.trace ("User " + account.accountId + " logged in.");
 		System.out.println("Would you like to:");
 		System.out.println("1. Deposit");
 		System.out.println("2. Withdraw");
@@ -56,6 +60,7 @@ public class UserSession {
 			break;
 		case("6"):
 			Session session = new Session(sc);
+			logger.trace("User " + account.accountId + " logged out.");
 			session.startProgram();
 			break;
 		default:
@@ -79,6 +84,8 @@ public class UserSession {
 		System.out.println(account.getFirstName() + "'s new balance: $" + account.getBalance() + '\n');
 		adao.saveAccountState(account);
 		
+		logger.trace ("User " + account.accountId + " deposited " + ammount + ".");
+		
 		startUserSession();
 	}
 	
@@ -96,6 +103,8 @@ public class UserSession {
 		account.setBalance((account.getBalance() - ammount));
 		System.out.println(account.getFirstName() + "'s new balance: $" + account.getBalance() + '\n');
 		adao.saveAccountState(account);
+		
+		logger.trace ("User " + account.accountId + " withdrew " + ammount + ".");
 		
 		startUserSession();
 	}
@@ -128,6 +137,9 @@ public class UserSession {
 		
 		adao.saveAccountState(account);
 		adao.saveAccountState(recipientAccount);
+		
+		logger.trace ("User " + account.accountId + " transfered " 
+		+ ammount + " to " + recipientAccount.accountId + ".");
 
 		startUserSession();
 	}
@@ -150,6 +162,9 @@ public class UserSession {
 //		System.out.println("Adding other account");
 //		System.out.println(otherAccount.getUsername() + joinId);
 		jdao.addToJoinAccount(otherAccount, joinId);
+		
+		logger.trace ("User " + account.accountId + " joined accounts with " 
+		+ otherAccount.accountId + ".");
 		
 		startUserSession();
 	}
