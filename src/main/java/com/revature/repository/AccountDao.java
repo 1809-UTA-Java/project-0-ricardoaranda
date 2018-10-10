@@ -91,6 +91,51 @@ public class AccountDao {
 		return a;
 	}
 	
+	public Account getAccountById(String accountId) {
+		PreparedStatement ps = null;
+		Account a = null;
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "SELECT * FROM USER_ACCOUNTS WHERE (a_id = ? ) ";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, accountId);
+			ResultSet rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				String userName = rs.getString("a_username");
+				String password = rs.getString("a_password");
+				String firstName = rs.getString("a_firstname");
+				String lastName = rs.getString("a_lastname");
+				String id = rs.getString("a_id");
+				String accountType = rs.getString("a_accounttype");
+				boolean isAdmin = (rs.getInt("a_isAdmin") == 1 ? true : false);
+				boolean active = (rs.getInt("a_active") == 1 ? true : false);
+				long balance = (rs.getLong("a_balance"));
+				
+				a = new UserAccount();
+				
+				a.setUsername(userName);
+				a.setPassword(password);
+				a.setFirstName(firstName);
+				a.setLastName(lastName);
+				
+				UUID uid = UUID.fromString(id);
+				a.setAccountId(uid);
+				
+				a.setAccountType(accountType);
+				a.setAdmin(isAdmin);
+				a.setActive(active);
+				a.setBalance(balance);
+			}
+		} catch (SQLException ex) {
+			ex.getMessage();
+		} catch (IOException ex) {
+			ex.getMessage();
+		}
+		
+		return a;
+	}
+	
 	public void saveAccountState(Account account) {
 		PreparedStatement ps = null;
 		String sql = "UPDATE USER_ACCOUNTS SET a_username = ?, a_password = ?, a_firstName = ?, "

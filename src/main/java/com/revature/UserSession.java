@@ -155,8 +155,15 @@ public class UserSession {
 	}
 	
 	public void printAccountInformation() {
-		System.out.println(account.toString());
-		startUserSession();
+		if (adao.retrieveJoinId(account.getAccountId()) == null) {
+			System.out.println(account.toString());
+			startUserSession();
+		}
+		else {
+			JoinAccountDao jdao = new JoinAccountDao();
+			jdao.printUsersFromJoin(adao.retrieveJoinId(account.getAccountId()));
+			startUserSession();
+		}
 	}
 	
 	public boolean evaluateDeposit(long ammount) {

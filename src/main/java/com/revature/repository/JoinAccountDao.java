@@ -5,6 +5,9 @@ import com.revature.UserAccount;
 import com.revature.Account.AccountType;
 
 import com.revature.util.*;
+
+import oracle.jdbc.internal.OracleTypes;
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.UUID;
@@ -116,5 +119,64 @@ public class JoinAccountDao {
 					e.printStackTrace();
 				}
 		}
+	}
+	
+	public void printAllJoinAccounts() {
+		CallableStatement cs = null;
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "{ CALL GET_JOIN_ACCOUNTS(?) }";
+			cs = conn.prepareCall(sql);
+			cs.registerOutParameter(1, OracleTypes.CURSOR);
+			
+			cs.execute();
+			
+			ResultSet rs = (ResultSet) cs.getObject(1);
+			while(rs.next()) {
+				System.out.println(rs.getString("a_account_id"));
+			}
+			
+			cs.close();
+			rs.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public void printUsersFromJoin(UUID establishedId) {
+		String sql = "";
+		PreparedStatement ps = null;
+		AccountDao adao = new AccountDao();
+		Account a = null;
+		
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			sql = "SELECT a_account_id FROM JOIN_ACCOUNTS "
+					+ "WHERE (a_join_id = ?)";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, establishedId.toString());
+			ResultSet rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				a = adao.getAccountById(rs.getString("a_account_id"));
+				
+				System.out.println(a.toString());
+			}
+		} 
+		catch (SQLException ex) {
+			ex.getMessage();
+		} 
+		catch (IOException ex) {
+			ex.getMessage();
+		} 
+		finally {
+            if (ps != null)
+				try {
+					ps.close();
+				} 
+            	catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		
 	}
 }

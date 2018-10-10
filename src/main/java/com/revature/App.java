@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.util.UUID;
 
 import com.revature.repository.AccountDao;
+import com.revature.repository.JoinAccountDao;
 
 public class App 
 {
